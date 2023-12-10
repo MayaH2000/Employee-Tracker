@@ -120,48 +120,12 @@ function viewAllDepartments() {
   }
   
   function addRole() {
-    inquirer
-      .prompt([
-        {
-          type: 'input',
-          name: 'name',
-          message: 'Enter employee role:',
-        },
-      ])
-      .then((answer) => {
-        connection.query(
-          'INSERT INTO role (name) VALUES (?)',
-          [answer.name],
-          (error, results) => {
-            if (error) throw error;
-            console.log('Role added successfully');
-            // Call the main menu function or another function here if needed
-          }
-        );
-      });
-    }
+    // Similar to addDepartment but prompting for role details
+  }
   
   function addEmployee() {
-    inquirer
-      .prompt([
-        {
-          type: 'input',
-          name: 'name',
-          message: 'Enter Employee name:',
-        },
-      ])
-      .then((answer) => {
-        connection.query(
-          'INSERT INTO employee (name) VALUES (?)',
-          [answer.name],
-          (error, results) => {
-            if (error) throw error;
-            console.log('Employee added successfully');
-            // Call the main menu function or another function here if needed
-          }
-        );
-      });
-    }
+    // Similar to addDepartment but prompting for employee details
+  }
   
   function updateEmployeeRole() {
     // Fetch the list of employees and roles to display for selection
@@ -173,20 +137,8 @@ function viewAllDepartments() {
 function startApp() {
     inquirer
       .prompt([
-        {
-          type: 'list',
-          name: 'action',
-          message: 'What would you like to do?',
-          choices: [
-            'View All Departments',
-            'View All Roles',
-            'View All Employees',
-            'Add Department',
-            'Add Role',
-            'Add Employee',
-            'Update Employee Role',
-          ],
-        },
+        // Display options: view departments, roles, employees, add department, add role, add employee, update employee role
+        // Each option corresponds to a function call to perform the specific action
       ])
       .then((answer) => {
         switch (answer.action) {
@@ -217,8 +169,7 @@ function startApp() {
         }
       });
   }
-  startApp();
-  
+  startApp()
 
 // Function to create a new employee using inquirer
 function createEmployee() {
@@ -264,7 +215,3 @@ function createEmployee() {
 
 // Start the application
 
-
-
-
-  
