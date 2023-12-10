@@ -2,11 +2,23 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
-// Define classes: Employee, Role, Department
 // Create a connection to the database
 const connection = mysql.createConnection({
-    // Your database connection details
+    host: 'your_host',
+    user: 'your_username',
+    password: 'your_password',
+    database: 'your_database_name'
   });
+  
+  // Connect to the database
+  connection.connect((err) => {
+    if (err) {
+      console.error('Error connecting to database:', err);
+      return;
+    }
+    console.log('Connected to database');
+  });
+  
 
 class Employee {
     constructor(name, role, department, salary, managerId) {
