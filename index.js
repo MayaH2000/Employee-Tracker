@@ -4,10 +4,10 @@ const mysql = require('mysql2');
 
 // Create a connection to the database
 const connection = mysql.createConnection({
-    host: 'your_host',
-    user: 'your_username',
-    password: 'your_password',
-    database: 'your_database_name'
+    host: 'localhost',
+    user: 'root',
+    password: 'atkababy',
+    database: 'employees_db'
   });
   
   // Connect to the database
@@ -17,8 +17,104 @@ const connection = mysql.createConnection({
       return;
     }
     console.log('Connected to database');
+    startApp();
+    createEmployee();
   });
   
+  
+  function startApp() {
+    inquirer
+      .prompt([
+        {
+          type: 'list',
+          name: 'action',
+          message: 'What would you like to do?',
+          choices: [
+            'View All Departments',
+            'View All Roles',
+            'View All Employees',
+            'Add Department',
+            'Add Role',
+            'Add Employee',
+            'Update Employee Role',
+          ],
+        },
+      ])
+      .then((answer) => {
+        switch (answer.action) {
+          case 'View All Departments':
+            viewAllDepartments();
+            break;
+          case 'View All Roles':
+            viewAllRoles();
+            break;
+          case 'View All Employees':
+            viewAllEmployees();
+            break;
+          case 'Add Department':
+            addDepartment();
+            break;
+          case 'Add Role':
+            addRole();
+            break;
+          case 'Add Employee':
+            addEmployee();
+            break;
+          case 'Update Employee Role':
+            updateEmployeeRole();
+            break;
+          default:
+            console.log('Invalid option selected');
+            break;
+        }
+      });
+  }
+  startApp();
+  
+
+// Function to create a new employee using inquirer
+function createEmployee() {
+    inquirer
+      .prompt([
+        {
+          type: 'input',
+          name: 'name',
+          message: 'Enter employee name:',
+        },
+        {
+          type: 'input',
+          name: 'role',
+          message: 'Enter employee role:',
+        },
+          {
+            type: 'input',
+            name: 'department',
+            message: 'Enter employee department:',
+          },
+          {
+            type: 'input',
+            name: 'salary',
+            message: 'Enter employee salary:',
+          },
+          {
+            type: 'input',
+            name: 'manager',
+            message: 'Enter employee manager:',
+          },
+        
+          
+          
+      ])
+      .then((answers) => {
+        const { name, role, department, salary, managerId } = answers;
+        const newEmployee = new Employee(name, role, department, salary, managerId);
+        console.log('New employee created:');
+        console.log(newEmployee.displayInfo());
+      });
+  }
+  createEmployee();
+
+
 
 class Employee {
     constructor(name, role, department, salary, managerId) {
@@ -78,12 +174,6 @@ class Employee {
       return this.employees.filter((employee) => employee.managerId === managerId);
     }
   }
-  
-
-
-
-
-// Assuming you have a MySQL connection initialized as `connection`
 
 function viewAllDepartments() {
     connection.query('SELECT * FROM department', (error, results) => {
@@ -180,103 +270,4 @@ function viewAllDepartments() {
     // Then prompt user to select an employee and their new role
     // Perform an SQL update query to update the employee's role
   }
-  
-// Application start function
-function startApp() {
-    inquirer
-      .prompt([
-        {
-          type: 'list',
-          name: 'action',
-          message: 'What would you like to do?',
-          choices: [
-            'View All Departments',
-            'View All Roles',
-            'View All Employees',
-            'Add Department',
-            'Add Role',
-            'Add Employee',
-            'Update Employee Role',
-          ],
-        },
-      ])
-      .then((answer) => {
-        switch (answer.action) {
-          case 'View All Departments':
-            viewAllDepartments();
-            break;
-          case 'View All Roles':
-            viewAllRoles();
-            break;
-          case 'View All Employees':
-            viewAllEmployees();
-            break;
-          case 'Add Department':
-            addDepartment();
-            break;
-          case 'Add Role':
-            addRole();
-            break;
-          case 'Add Employee':
-            addEmployee();
-            break;
-          case 'Update Employee Role':
-            updateEmployeeRole();
-            break;
-          default:
-            console.log('Invalid option selected');
-            break;
-        }
-      });
-  }
-  startApp();
-  
-
-// Function to create a new employee using inquirer
-function createEmployee() {
-    inquirer
-      .prompt([
-        {
-          type: 'input',
-          name: 'name',
-          message: 'Enter employee name:',
-        },
-        {
-          type: 'input',
-          name: 'role',
-          message: 'Enter employee role:',
-        },
-          {
-            type: 'input',
-            name: 'department',
-            message: 'Enter employee department:',
-          },
-          {
-            type: 'input',
-            name: 'salary',
-            message: 'Enter employee salary:',
-          },
-          {
-            type: 'input',
-            name: 'manager',
-            message: 'Enter employee manager:',
-          },
-        
-          
-          
-      ])
-      .then((answers) => {
-        const { name, role, department, salary, managerId } = answers;
-        const newEmployee = new Employee(name, role, department, salary, managerId);
-        console.log('New employee created:');
-        console.log(newEmployee.displayInfo());
-      });
-  }
-  createEmployee();
-
-// Start the application
-
-
-
-
   
