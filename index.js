@@ -18,7 +18,6 @@ const connection = mysql.createConnection({
     }
     console.log('Connected to database');
     startApp();
-    createEmployee();
   });
   
   
@@ -69,7 +68,6 @@ const connection = mysql.createConnection({
         }
       });
   }
-  startApp();
   
 
 // Function to create a new employee using inquirer
@@ -112,8 +110,6 @@ function createEmployee() {
         console.log(newEmployee.displayInfo());
       });
   }
-  createEmployee();
-
 
 
 class Employee {
@@ -151,10 +147,8 @@ class Employee {
   }
   
   class Department {
-    constructor(name, location, budget, managerId) {
+    constructor(name, managerId) {
       this.name = name;
-      this.location = location;
-      this.budget = budget;
       this.managerId = managerId;
       this.employees = [];
     }
@@ -175,13 +169,14 @@ class Employee {
     }
   }
 
-function viewAllDepartments() {
-    connection.query('SELECT * FROM department', (error, results) => {
-      if (error) throw error;
-      console.table(results);
-      // Call the main menu function or another function here if needed
+  function viewAllDepartments() {
+    connection.query('SELECT id, name FROM department', (error, results) => {
+        if (error) throw error;
+        console.table(results);
+        // Call the main menu function or another function here if needed
     });
-  }
+}
+
   
   function viewAllRoles() {
     connection.query('SELECT * FROM role', (error, results) => {
@@ -242,32 +237,92 @@ function viewAllDepartments() {
         );
       });
     }
-  
-  function addEmployee() {
-    inquirer
-      .prompt([
-        {
-          type: 'input',
-          name: 'name',
-          message: 'Enter Employee name:',
-        },
-      ])
-      .then((answer) => {
-        connection.query(
-          'INSERT INTO employee (name) VALUES (?)',
-          [answer.name],
-          (error, results) => {
-            if (error) throw error;
-            console.log('Employee added successfully');
-            // Call the main menu function or another function here if needed
-          }
-        );
-      });
+
+    function addEmployee() {
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'first_name',
+                    message: 'Enter Employee first name:',
+                },
+                {
+                    type: 'input',
+                    name: 'last_name',
+                    message: 'Enter Employee last name:',
+                },
+                {
+                    type: 'input',
+                    name: 'role_id',
+                    message: 'Enter Employee role ID:',
+                },
+                {
+                    type: 'input',
+                    name: 'manager_id',
+                    message: 'Enter Employee manager ID:',
+                },
+            ])
+            .then((answers) => {
+                connection.query(
+                    'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)',
+                    [answers.first_name, answers.last_name,  Number (answers.role_id), Number (answers.manager_id)],
+                    (error, results) => {
+                        if (error) throw error;
+                        console.log('Employee added successfully');
+                        // Call the main menu function or another function here if needed
+                    }
+                );
+            });
     }
+    
   
-  function updateEmployeeRole() {
-    // Fetch the list of employees and roles to display for selection
-    // Then prompt user to select an employee and their new role
-    // Perform an SQL update query to update the employee's role
-  }
-  
+    function updateEmployeeRole() {
+        // Fetch the list of employees
+        connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS full_name FROM employee', (error, employees) => {
+          if (error) throw error;
+      
+          // Display employees for selection
+          console.log('Employees:');
+          employees.forEach((employee) => {
+            console.log(`${employee.id}. ${employee.full_name}`);
+          });
+      
+          // Prompt user to select an employee by ID
+          inquirer
+            .prompt([
+              {
+                type: 'input',
+                name: 'employeeId',
+                message: 'Enter the ID of the employee whose role you want to update:',
+                validate: (value) => {
+                  const valid = employees.some((employee) => employee.id === parseInt(value));
+                  return valid || 'Please enter a valid employee ID';
+                },
+              },
+              {
+                type: 'input',
+                name: 'newRoleId',
+                message: 'Enter the new role ID for the employee:',
+                validate: (value) => {
+                  // You might validate the new role ID here if needed
+                  return value !== '' || 'Please enter a role ID';
+                },
+              },
+            ])
+            .then((answers) => {
+              const { employeeId, newRoleId } = answers;
+      
+              // Perform SQL update query to update the employee's role
+              connection.query(
+                'UPDATE employee SET role_id = ? WHERE id = ?',
+                [parseInt(newRoleId), parseInt(employeeId)],
+                (error, results) => {
+                  if (error) throw error;
+                  console.log('Employee role updated successfully');
+                  // You can add further actions here if needed
+                }
+              );
+            });
+        });
+      }
+      
