@@ -33,12 +33,12 @@ Node.js installed on your machine
 MySQL installed and running
 Installation Steps:
 
-Clone the Repository: git@github.com:MayaH2000/Employee-Tracker.git
+Clone the Repository: 
 
 bash
 Copy code
-git clone <repository_url>
-cd employee-tracker-app
+git clone git@github.com:MayaH2000/Employee-Tracker.git
+cd employee-tracker
 Install Dependencies:
 
 bash
